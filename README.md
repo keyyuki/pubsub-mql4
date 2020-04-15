@@ -20,3 +20,32 @@ For more information, read 2 responsitories below:
 
 - Pubsub for MQL4: https://github.com/dingmaotu/mql4-redis
 - Docker for MQL4: https://github.com/nevmerzhitsky/headless-metatrader4
+
+To test, can use typescript
+
+```
+import * as redis from 'redis';
+
+const subcriber = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: +(process.env.REDIS_PORT || 6379),
+});
+
+subcriber.subscribe('Symbol-info');
+subcriber.subscribe('tick');
+subcriber.subscribe('health');
+
+subcriber.on('message', (channel, message: string) => {
+  console.log(channel, message);
+});
+
+// subcriber and publisher must be 2 individual object
+const publisher = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: +(process.env.REDIS_PORT || 6379),
+});
+
+setTimeout(() => {
+  publisher.publish('get-symbol-infor', 'EURUSD');
+}, 10000);
+```

@@ -3,10 +3,10 @@ Please read and config as 2 responsitories below:
 - Pubsub for MQL4: https://github.com/dingmaotu/mql4-redis
 - Docker for MQL4: https://github.com/nevmerzhitsky/headless-metatrader4
 
-Create file `/mt4/config.ini` like that
+Create file `/mt4/MQL4/Files/config.ini` like that
 
 ```
-REDIS_HOST=host.docker.internal
+REDIS_HOST=redis
 REDIS_POST=6379
 ```
 

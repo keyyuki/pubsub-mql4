@@ -3,7 +3,6 @@ services:
   headlessmql:
     image: nevmerzhitsky/headless-metatrader4
     volumes:
-      - ./config.ini:/home/winer/.wine/drive_c/mt4/MQL4/Files/config.ini
       - ./mt4:/home/winer/.wine/drive_c/mt4
       - ./screenshots:/tmp/screenshots
     cap_add:

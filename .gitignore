@@ -1,6 +1,6 @@
 mt4/logs/*
 mt4/MQL4/Logs/*
-mt4/MQL4/Files/*
+mt4/MQL4/Files/*.log
 screenshots/*
 mt4/startup.ini
 mt4/config.ini

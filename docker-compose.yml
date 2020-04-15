@@ -3,10 +3,16 @@ services:
   headlessmql:
     image: nevmerzhitsky/headless-metatrader4
     volumes:
+      - ./config.ini:/home/winer/.wine/drive_c/mt4/MQL4/Files/config.ini
       - ./mt4:/home/winer/.wine/drive_c/mt4
       - ./screenshots:/tmp/screenshots
-      - ./mt4/config.ini:/home/winer/.wine/drive_c/mt4/MQL4/Files/config.ini
     cap_add:
       - SYS_PTRACE
     command:
       - /docker/run_mt.sh
+    depends_on:
+      - redis
+  redis:
+    image: redis
+    ports:
+      - 6379:6379

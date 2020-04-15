@@ -21,15 +21,16 @@ Hash *config = new Hash();
 int OnInit()
   {
 //--- create timer
-   EventSetTimer(1); //1s
-   
+   EventSetTimer(300);
    readConfig();
    string redisHost = config.hGetString("REDIS_HOST");
    int redisPort = StrToInteger(config.hGetString("REDIS_POST"));
    RedisContext *c=RedisContext::connect(redisHost,redisPort);
   
    if(c==NULL)
-     {
+     {      
+      writeLog("connect redis failed");
+      
       return INIT_FAILED;
      }
    client=new RedisPubSub(c);
@@ -37,16 +38,18 @@ int OnInit()
  
    
    string out = GetInforSymbol(Symbol());
+   writeLog("send synbol infor");
    client.publish("Symbol-info", out);
-   
+   writeLog("end send synbol infor");
    
    if(client.hasError())
      {
+      writeLog("Error occured when publishing to treids. Prepare to quit");
       Print("Error occured when publishing to treids. Prepare to quit");
       return INIT_FAILED;
      }
    
-   
+   writeLog("return oninit");
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
@@ -74,7 +77,7 @@ void OnTick()
    printf("SYMBOL_ASKHIGH bid price=%f",SymbolInfoDouble(Symbol(),SYMBOL_ASKHIGH));
    printf("SYMBOL_ASKLOW bid price=%f",SymbolInfoDouble(Symbol(),SYMBOL_ASKLOW));
    */
-   //printf("tick");
+   
    CJAVal js(NULL,jtUNDEF);
    js["Symbol"] = Symbol();
    js["MODE_TIME"] = MarketInfo(Symbol(),MODE_TIME);
@@ -83,16 +86,20 @@ void OnTick()
    string out="";
    js.Serialize(out);
    client.publish("tick",out);
+   if(client.hasError()){
+      writeLog("on tick error");
+      writeLog(client.getMessage());
+   }
    return;
   }
 //+------------------------------------------------------------------+
 //| Timer function                                                   |
 //+------------------------------------------------------------------+
-void OnTimer()
-  {
-//---
-
-  }
+void OnTimer(){
+   writeLog("still alive");
+   
+   client.publish("health","1");
+}
 //+------------------------------------------------------------------+
 //| Tester function                                                  |
 //+------------------------------------------------------------------+
@@ -165,6 +172,25 @@ void readConfig(){
       //--- close the file
       FileClose(file_handle);
       PrintFormat("Data is read, %s file is closed",InpFileName);
+     }
+   else
+      PrintFormat("Failed to open %s file, Error code = %d",InpFileName,GetLastError());
+}
+
+void writeLog(string str)
+{
+   string InpFileName = "log.log";
+   
+   string curT = TimeToString(TimeCurrent(), TIME_DATE|TIME_SECONDS );
+   int file_handle=FileOpen(InpFileName,FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, ";");
+   if(file_handle!=INVALID_HANDLE)
+     {
+      FileSeek(file_handle, 0, SEEK_END);
+      //--- read data from the file      
+      FileWriteString(file_handle, curT + "\t" +str + "\r\n");
+      //--- close the file
+      FileClose(file_handle);
+      
      }
    else
       PrintFormat("Failed to open %s file, Error code = %d",InpFileName,GetLastError());

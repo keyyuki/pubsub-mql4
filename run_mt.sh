@@ -11,7 +11,7 @@ term_handler() {
     echo '########################################'
     echo 'SIGTERM signal received'
 
-    if ps -p $TERMINAL_PID > /dev/null; then
+    if ps -p $TERMINAL_PID >/dev/null; then
         kill -SIGTERM $TERMINAL_PID
         # Wait returns status of the killed process, with set -e this breaks the script
         wait $TERMINAL_PID || true
@@ -20,7 +20,7 @@ term_handler() {
     # Wait end of all wine processes
     /docker/waitonprocess.sh wineserver
 
-    if ps -p $XVFB_PID > /dev/null; then
+    if ps -p $XVFB_PID >/dev/null; then
         kill -SIGTERM $XVFB_PID
         # Wait returns status of the killed process, with set -e this breaks the script
         wait $XVFB_PID || true
@@ -36,8 +36,12 @@ Xvfb $DISPLAY -screen $SCREEN_NUM $SCREEN_WHD \
     +extension GLX \
     +extension RANDR \
     +extension RENDER \
-    &> /tmp/xvfb.log &
+    &>/tmp/xvfb.log &
 XVFB_PID=$!
+sleep 2
+fluxbox &
+sleep 2
+x11vnc -bg -nopw -rfbport 5900 -forever -xkb -o /tmp/x11vnc.log &
 sleep 2
 
 # @TODO Use special argument to pass value "startup.ini"

@@ -1,14 +1,15 @@
 version: "3.7"
 services:
   headlessmql:
-    image: nevmerzhitsky/headless-metatrader4
+    image: keyyuki/headless-mt4:1.0
     volumes:
       - ./mt4:/home/winer/.wine/drive_c/mt4
       - ./screenshots:/tmp/screenshots
     cap_add:
       - SYS_PTRACE
-    command:
-      - /docker/run_mt.sh
+    ports:
+      - 5900:5900
+
     depends_on:
       - redis
   redis:

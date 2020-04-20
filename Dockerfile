@@ -7,18 +7,18 @@ RUN set -ex; \
     dpkg --add-architecture i386; \
     DEBIAN_FRONTEND=noninteractive apt-get update -y; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        apt-transport-https \
-        binutils \
-        cabextract \
-        curl \
-        # To take screenshots of Xvfb display
-        imagemagick \
-        p7zip \
-        software-properties-common \
-        wget \
-        unzip \
-        xz-utils \
-        xvfb
+    apt-transport-https \
+    binutils \
+    cabextract \
+    curl \
+    # To take screenshots of Xvfb display
+    imagemagick \
+    p7zip \
+    software-properties-common \
+    wget \
+    unzip \
+    xz-utils \
+    xvfb
 
 RUN set -ex; \
     wget -nc https://dl.winehq.org/wine-builds/winehq.key; \
@@ -26,7 +26,9 @@ RUN set -ex; \
     apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/; \
     DEBIAN_FRONTEND=noninteractive apt-get update -y; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --install-recommends \
-        winehq-stable; \
+    winehq-stable; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y x11vnc; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y fluxbox; \
     rm winehq.key
 
 RUN set -ex; \

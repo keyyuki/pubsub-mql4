@@ -78,18 +78,22 @@ void OnTick()
    printf("SYMBOL_ASKLOW bid price=%f",SymbolInfoDouble(Symbol(),SYMBOL_ASKLOW));
    */
    
-   CJAVal js(NULL,jtUNDEF);
-   js["Symbol"] = Symbol();
-   js["MODE_TIME"] = MarketInfo(Symbol(),MODE_TIME);
-   js["MODE_BID"] = MarketInfo(Symbol(),MODE_BID);
-   js["MODE_ASK"] = MarketInfo(Symbol(),MODE_ASK);
-   string out="";
-   js.Serialize(out);
+   //CJAVal js(NULL,jtUNDEF);
+   //js["Symbol"] = Symbol();
+   //js["MODE_TIME"] = MarketInfo(Symbol(),MODE_TIME);
+   //js["MODE_BID"] = MarketInfo(Symbol(),MODE_BID);
+   //js["MODE_ASK"] = MarketInfo(Symbol(),MODE_ASK);
+   string out= Symbol() ;
+   out = out + DoubleToStr( MarketInfo(Symbol(),MODE_TIME)) + ";";
+   out = out + DoubleToStr( MarketInfo(Symbol(),MODE_BID)) + ";";
+   out = out + DoubleToStr( MarketInfo(Symbol(),MODE_ASK)) + ";";
+   //js.Serialize(out);   
    client.publish("tick",out);
    if(client.hasError()){
       writeLog("on tick error");
       writeLog(client.getMessage());
-   }
+   } 
+   
    return;
   }
 //+------------------------------------------------------------------+
@@ -97,7 +101,7 @@ void OnTick()
 //+------------------------------------------------------------------+
 void OnTimer(){
    writeLog("still alive");
-   
+   Print("still alive");
    client.publish("health","1");
 }
 //+------------------------------------------------------------------+
@@ -137,6 +141,8 @@ string GetInforSymbol(string symbol)
    js["MODE_LOTSTEP"] = MarketInfo(symbol,MODE_LOTSTEP);
    string out="";
    js.Serialize(out);
+   
+   
    return out;
 }
 
